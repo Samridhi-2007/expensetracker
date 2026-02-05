@@ -39,6 +39,7 @@ app.use("/api/v1/users", authRoutes);
 app.get("/", (req, res) => {
   res.send("Server is running!");
 });
+app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // serve uploaded files
 
 // 7️⃣ Start the server
 const PORT = process.env.PORT || 5000;
