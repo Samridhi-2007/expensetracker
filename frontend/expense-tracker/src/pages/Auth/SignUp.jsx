@@ -4,21 +4,26 @@ import AuthLayout from "../../components/layouts/AuthLayout";
 import Input from "../../components/Input/Input";
 import { validateEmail } from "../../utils/helper";
 import ProfilePhotoSelector from "../../components/Input/ProfilePhotoSelector";
+import axiosInstance from "../../utils/axiosInstance";
+import { API_PATHS } from "../../utils/apiPaths";
+import { useContext } from "react";
+import { UserContext } from "../../context/userContext";
+
+import uploadImage from "../../utils/uploadImage";
 
 const SignUp = () => {
-  const [profilePic, setProfilePic] = useState(null); // ✅ FIX
+  const [profilePic, setProfilePic] = useState(null);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-
+  const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    let profileImgUrl = null;
 
-    if (!fullName) {
+    if (!fullName.trim()) {
       setError("Full name is required");
       return;
     }
@@ -35,14 +40,30 @@ const SignUp = () => {
 
     setError(null);
 
-    console.log("Signup Data:", {
-      fullName,
-      email,
-      password,
-      profilePic,
-    });
+    try {
+      let profileImageUrl = "";
 
-    // navigate("/login");
+      if (profilePic) {
+        const imgUploadRes = await uploadImage(profilePic);
+        console.log("Upload response:", imgUploadRes);
+
+        profileImageUrl = imgUploadRes?.data?.imageUrl || "";
+      }
+
+      await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
+        fullName,
+        email,
+        password,
+        profileImageUrl,
+      });
+
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+      setError(
+        error.response?.data?.message || "Signup failed. Please try again.",
+      );
+    }
   };
 
   return (

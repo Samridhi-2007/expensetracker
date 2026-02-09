@@ -4,6 +4,9 @@ const cors = require("cors");
 const path = require("path");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const incomeRoutes = require("./routes/incomeRoutes");
+const expenseRoutes = require("./routes/expenseRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 // 1️⃣ Connect to MongoDB
 connectDB();
@@ -34,6 +37,9 @@ app.use((req, res, next) => {
 
 // 5️⃣ Routes
 app.use("/api/v1/users", authRoutes);
+app.use("/api/v1/income", incomeRoutes);
+app.use("/api/v1/expense", expenseRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 
 // 6️⃣ Default route for testing
 app.get("/", (req, res) => {
