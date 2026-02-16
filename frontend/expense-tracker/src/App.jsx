@@ -1,5 +1,5 @@
 import React from "react";
-import Login from "./pages/Auth/login";
+import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
 import Home from "./pages/Dashboard/Home";
 import Income from "./pages/Dashboard/Income";

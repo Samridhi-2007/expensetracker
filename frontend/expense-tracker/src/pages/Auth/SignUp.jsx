@@ -45,8 +45,6 @@ const SignUp = () => {
 
       if (profilePic) {
         const imgUploadRes = await uploadImage(profilePic);
-        console.log("Upload response:", imgUploadRes);
-
         profileImageUrl = imgUploadRes?.data?.imageUrl || "";
       }
 
@@ -59,7 +57,6 @@ const SignUp = () => {
 
       navigate("/login");
     } catch (error) {
-      console.error(error);
       setError(
         error.response?.data?.message || "Signup failed. Please try again.",
       );

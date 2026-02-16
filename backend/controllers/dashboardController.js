@@ -1,7 +1,7 @@
 const Income = require("../models/Income");
 const Expense = require("../models/Expense");
 
-const { isValidObjectId, Types } = require("mongoose");
+const { Types } = require("mongoose");
 
 exports.getDashboardData = async (req, res) => {
   try {
@@ -13,11 +13,6 @@ exports.getDashboardData = async (req, res) => {
 
       { $group: { _id: null, total: { $sum: "$amount" } } },
     ]);
-
-    console.log("Total Income:", {
-      totalIncome,
-      userId: isValidObjectId(userId),
-    });
 
     const totalExpense = await Expense.aggregate([
       { $match: { userId: userObjectId } },
@@ -44,24 +39,28 @@ exports.getDashboardData = async (req, res) => {
 
     const lastTransactions = [
       ...(
-        await Income.find({ userId: userObjectId }).sort({ date: -1 }).limit(5)
+        await Income.find({ userId: userObjectId }).sort({ date: -1 }).limit(10)
       ).map((txn) => ({
         ...txn.toObject(),
         type: "income",
       })),
       ...(
-        await Expense.find({ userId: userObjectId }).sort({ date: -1 }).limit(5)
+        await Expense.find({ userId: userObjectId }).sort({ date: -1 }).limit(10)
       ).map((txn) => ({
         ...txn.toObject(),
         type: "expense",
       })),
-    ].sort((a, b) => b.date - a.date);
+    ]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 10);
+    const totalIncomeAmount = totalIncome[0]?.total || 0;
+    const totalExpenseAmount = totalExpense[0]?.total || 0;
+
     res.json({
-      totalBalance:
-        (totalIncome[0]?.total || 0) - (totalExpense[0]?.total || 0),
-
-      totalExpenses: totalExpense[0]?.total || 0,
-
+      totalBalance: totalIncomeAmount - totalExpenseAmount,
+      totalIncome: totalIncomeAmount,
+      totalExpense: totalExpenseAmount,
+      totalExpenses: totalExpenseAmount,
       last30DaysExpenses: {
         total: expenseLast30Days,
         transactions: last30DaysExpenseTransactions,

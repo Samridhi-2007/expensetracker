@@ -9,8 +9,10 @@ const Navbar = ({ activeMenu }) => {
     <div className="flex gap-5 bg-white border-b border-gray-200/50 py-4 px-7 sticky top-0 z-30">
       {/* Mobile Menu Button */}
       <button
-        className="block lg:hidden text-black"
+        type="button"
+        className="block lg:hidden text-black p-1"
         onClick={() => setOpenSideMenu(!openSideMenu)}
+        aria-label={openSideMenu ? "Close menu" : "Open menu"}
       >
         {openSideMenu ? (
           <HiOutlineX className="text-2xl" />
@@ -23,8 +25,8 @@ const Navbar = ({ activeMenu }) => {
 
       {/* Mobile SideMenu */}
       {openSideMenu && (
-        <div className="fixed top-[61px] left-0 w-64 h-full bg-white shadow-lg lg:hidden">
-          <SideMenu activeMenu={activeMenu} />
+        <div className="fixed top-[61px] left-0 w-64 h-full bg-white shadow-lg z-20 lg:hidden">
+          <SideMenu activeMenu={activeMenu} onNavigate={() => setOpenSideMenu(false)} />
         </div>
       )}
     </div>

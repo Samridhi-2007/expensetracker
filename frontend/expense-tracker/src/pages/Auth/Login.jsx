@@ -28,7 +28,6 @@ const Login = () => {
         email,
         password,
       });
-      console.log(response.data);
       const { token, user } = response.data;
 
       if (token) {
