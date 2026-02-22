@@ -8,13 +8,13 @@ import InfoCard from "../../components/Cards/InfoCard";
 import { LuHandCoins, LuWalletMinimal } from "react-icons/lu";
 import { IoMdCard } from "react-icons/io";
 import { addThousandSeparator } from "../../utils/helper";
-import ExpenseTransactions from "../../components/DashBoard/ExpenseTransactions";
-import Last30daysExpenses from "../../components/DashBoard/Last30daysExpenses";
-import RecentIncomeWithChart from "../../components/DashBoard/RecentIncomeWithChart";
-import RecentIncome from "../../components/DashBoard/RecentIncome";
-import RecentTransactions from "../../components/DashBoard/RecentTransactions";
-import FinanceOverview from "../../components/DashBoard/FinanceOverview";
-import ExportToExcel from "../../components/DashBoard/ExportToExcel";
+import ExpenseTransactions from "../../components/Dashboard/ExpenseTransactions";
+import Last30daysExpenses from "../../components/Dashboard/Last30daysExpenses";
+import RecentIncomeWithChart from "../../components/Dashboard/RecentIncomeWithChart";
+import RecentIncome from "../../components/Dashboard/RecentIncome";
+import RecentTransactions from "../../components/Dashboard/RecentTransactions";
+import FinanceOverview from "../../components/Dashboard/FinanceOverview";
+import ExportToExcel from "../../components/Dashboard/ExportToExcel";
 
 const Home = () => {
   useUserAuth();
@@ -91,9 +91,7 @@ const Home = () => {
             totalExpense={dashboardData?.totalExpense || 0}
           />
           <ExpenseTransactions
-            transaction={
-              dashboardData?.last30DaysExpenses?.transactions || []
-            }
+            transaction={dashboardData?.last30DaysExpenses?.transactions || []}
             onSeeMore={() => navigate("/expense")}
           />
           <Last30daysExpenses
