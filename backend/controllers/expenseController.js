@@ -4,8 +4,8 @@ exports.addExpense = async (req, res) => {
   const userId = req.user._id;
 
   try {
-    const { icon, source, amount, date } = req.body;
-    if (!source || !amount || !date) {
+    const { icon, category, amount, date } = req.body;
+    if (!category || !amount || !date) {
       return res
         .status(400)
         .json({ message: "Please provide all required fields" });
@@ -13,7 +13,7 @@ exports.addExpense = async (req, res) => {
     const newExpense = new Expense({
       userId,
       icon,
-      source,
+      category,
       amount,
       date: new Date(date),
     });
@@ -34,8 +34,12 @@ exports.getAllExpenses = async (req, res) => {
 };
 exports.deleteExpense = async (req, res) => {
   const userId = req.user._id;
+  const { id } = req.params;
   try {
-    await Expense.findByIdAndDelete(req.params.id);
+    const deleted = await Expense.findOneAndDelete({ _id: id, userId });
+    if (!deleted) {
+      return res.status(404).json({ message: "Expense not found" });
+    }
     res.status(200).json({ message: "Expense deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
@@ -46,7 +50,7 @@ exports.downloadExpenseExcel = async (req, res) => {
   try {
     const expenses = await Expense.find({ userId }).sort({ date: -1 });
     const data = expenses.map((item) => ({
-      Source: item.source,
+      Category: item.category,
       Amount: item.amount,
       Date: item.date,
     }));

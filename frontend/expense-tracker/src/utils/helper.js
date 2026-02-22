@@ -1,3 +1,4 @@
+import moment from "moment";
 export const validateEmail = (email) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(String(email).toLowerCase());
@@ -30,9 +31,38 @@ export const addThousandSeparator = (num) => {
 };
 
 export const prepareExpenseBarChartData = (transactions) => {
-  const chartData = transactions.map((item) => ({
-    category: item.category,
-    amount: item.amount,
+  if (!Array.isArray(transactions)) return [];
+  return transactions.map((item) => ({
+    category: item.category ?? "—",
+    amount: item.amount ?? 0,
   }));
+};
+
+/**
+ * Group last-30-days expense transactions by category and sum amounts.
+ * Use for "Last 30 Days Expenses" chart (one bar per category).
+ */
+export const prepareLast30DaysExpenseChartData = (transactions) => {
+  if (!Array.isArray(transactions) || transactions.length === 0) return [];
+  const byCategory = {};
+  transactions.forEach((item) => {
+    const cat = item.category?.trim() || "Other";
+    byCategory[cat] = (byCategory[cat] || 0) + Number(item.amount || 0);
+  });
+  return Object.entries(byCategory)
+    .map(([category, amount]) => ({ category, amount }))
+    .sort((a, b) => b.amount - a.amount);
+};
+
+export const prepareIncomeBarChartData = (transactions) => {
+  const sortedData = [...transactions].sort(
+    (a, b) => new Date(a.date) - new Date(b.date),
+  );
+  const chartData = sortedData.map((item) => ({
+    month: moment(item?.date).format("Do MMM"),
+    amount: item?.amount,
+    source: item?.source,
+  }));
+
   return chartData;
 };
